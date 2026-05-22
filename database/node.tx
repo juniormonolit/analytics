@@ -1,0 +1,45 @@
+{
+"nodes": [
+    {
+     "parameters": {
+        "url": "https://iinmvywgxkyqvkvtjnam.supabase.co/rest/v1/deals",
+        "sendQuery": true,
+        "queryParameters": {
+         "parameters": [
+            {
+             "name": "deal_id",
+             "value": "eq.167244"
+            }
+         ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+         "parameters": [
+            {
+             "name": "apikey",
+             "value": "sb_publishable_qVlG2VPeajgU97wWXJIoIg_EILZgjqF"
+            },
+            {
+             "name": "Accept-Profile",
+             "value": "sa"
+            }
+         ]
+        },
+        "options": {}
+     },
+     "type": "n8n-nodes-base.httpRequest",
+     "typeVersion": 4.4,
+     "position": [
+        208,
+        0
+     ],
+     "id": "cc380214-f31d-41a0-abda-74a4fe715bb0",
+     "name": "HTTP Request"
+    }
+],
+"connections": {},
+"pinData": {},
+"meta": {
+    "instanceId": "d6fc6a530c669d04d358a183a3978f5be814f1075a7c294357537e78af4b8534"
+}
+}

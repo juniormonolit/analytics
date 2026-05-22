@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA Schema — API Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e17;
+  --bg-card: #111827;
+  --bg-card-hover: #1a2332;
+  --bg-code: #0d1117;
+  --border: #1e293b;
+  --border-accent: #334155;
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --text-muted: #64748b;
+  --accent: #38bdf8;
+  --accent-dim: #0ea5e9;
+  --green: #34d399;
+  --green-dim: #059669;
+  --yellow: #fbbf24;
+  --yellow-dim: #d97706;
+  --red: #f87171;
+  --red-dim: #dc2626;
+  --purple: #a78bfa;
+  --pink: #f472b6;
+  --orange: #fb923c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Layout */
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+.main { margin-left: 280px; flex: 1; padding: 32px 48px 80px; max-width: 1100px; }
+
+/* Sidebar */
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.sidebar-header h1 {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.sidebar-header .schema-badge {
+  display: inline-block;
+  background: rgba(56,189,248,0.1);
+  border: 1px solid rgba(56,189,248,0.2);
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.sidebar-section {
+  padding: 8px 20px;
+}
+.sidebar-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-dim);
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.nav-item:hover { background: rgba(56,189,248,0.08); color: var(--text); }
+.nav-item.active { background: rgba(56,189,248,0.12); color: var(--accent); }
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.nav-count {
+  margin-left: auto;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* Main content */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.page-subtitle {
+  color: var(--text-dim);
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 36px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+/* Section */
+.section { margin-bottom: 48px; scroll-margin-top: 24px; }
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title .icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Table card */
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.table-card:hover { border-color: var(--border-accent); }
+.table-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+.table-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.table-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.table-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.badge-table { background: rgba(52,211,153,0.12); color: var(--green); }
+.badge-view { background: rgba(167,139,250,0.12); color: var(--purple); }
+.badge-matview { background: rgba(251,191,36,0.12); color: var(--yellow); }
+.badge-rows {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.table-chevron {
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  font-size: 14px;
+}
+.table-card.open .table-chevron { transform: rotate(180deg); }
+.table-body {
+  display: none;
+  border-top: 1px solid var(--border);
+}
+.table-card.open .table-body { display: block; }
+
+/* Columns table */
+.cols-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.cols-table th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--border);
+}
+.cols-table td {
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(30,41,59,0.5);
+  vertical-align: top;
+}
+.cols-table tr:last-child td { border-bottom: none; }
+.cols-table tr:hover td { background: rgba(56,189,248,0.03); }
+.col-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+.col-type {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--yellow);
+  font-size: 12px;
+}
+.col-constraint {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-right: 3px;
+  letter-spacing: 0.04em;
+}
+.pk { background: rgba(251,191,36,0.15); color: var(--yellow); }
+.fk { background: rgba(167,139,250,0.15); color: var(--purple); }
+.uq { background: rgba(52,211,153,0.15); color: var(--green); }
+.nn { background: rgba(148,163,184,0.1); color: var(--text-muted); }
+.col-default {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.col-fk-link {
+  font-size: 11px;
+  color: var(--purple);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+/* API endpoints */
+.endpoint-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.endpoint-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+.method-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  min-width: 56px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+.method-get { background: rgba(52,211,153,0.15); color: var(--green); }
+.method-post { background: rgba(56,189,248,0.15); color: var(--accent); }
+.method-patch { background: rgba(251,191,36,0.15); color: var(--yellow); }
+.method-delete { background: rgba(248,113,113,0.15); color: var(--red); }
+.endpoint-path { color: var(--text-dim); }
+.endpoint-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  padding-left: 66px;
+}
+
+/* ER diagram */
+.er-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  overflow-x: auto;
+}
+.er-svg { width: 100%; min-height: 400px; }
+.er-node {
+  cursor: pointer;
+}
+.er-node rect {
+  rx: 8; ry: 8;
+  fill: var(--bg);
+  stroke: var(--border-accent);
+  stroke-width: 1.5;
+  transition: stroke 0.2s;
+}
+.er-node:hover rect { stroke: var(--accent); }
+.er-node text.name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--accent);
+}
+.er-link {
+  stroke: var(--border-accent);
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrow);
+}
+
+/* Functions */
+.func-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.func-sig {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+.func-name { color: var(--green); font-weight: 600; }
+.func-args { color: var(--text-dim); }
+.func-ret { color: var(--yellow); font-size: 12px; }
+.func-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(248,113,113,0.12);
+  color: var(--red);
+  margin-left: 8px;
+}
+
+/* RLS section */
+.rls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+.rls-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.rls-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rls-off { background: var(--red); }
+.rls-on { background: var(--green); }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.tab {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  border: none;
+  background: none;
+}
+.tab:hover { color: var(--text-dim); }
+.tab.active { background: var(--bg-card); color: var(--accent); }
+
+/* Search */
+.search-box {
+  width: 100%;
+  padding: 8px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  margin-bottom: 16px;
+}
+.search-box::placeholder { color: var(--text-muted); }
+.search-box:focus { border-color: var(--accent); }
+
+/* Warning box */
+.warning-box {
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--yellow);
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
+
+/* Mobile */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h1>API Docs</h1>
+      <div class="schema-badge">schema: sa</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Навигация</div>
+      <a class="nav-item" href="#overview" onclick="scrollToSection('overview')">
+        <span class="nav-dot" style="background:var(--accent)"></span> Обзор
+      </a>
+      <a class="nav-item" href="#tables" onclick="scrollToSection('tables')">
+        <span class="nav-dot" style="background:var(--green)"></span> Таблицы <span class="nav-count">15</span>
+      </a>
+      <a class="nav-item" href="#views" onclick="scrollToSection('views')">
+        <span class="nav-dot" style="background:var(--purple)"></span> Views <span class="nav-count">1</span>
+      </a>
+      <a class="nav-item" href="#matviews" onclick="scrollToSection('matviews')">
+        <span class="nav-dot" style="background:var(--yellow)"></span> Mat. Views <span class="nav-count">5</span>
+      </a>
+      <a class="nav-item" href="#api" onclick="scrollToSection('api')">
+        <span class="nav-dot" style="background:var(--orange)"></span> REST API
+      </a>
+      <a class="nav-item" href="#er" onclick="scrollToSection('er')">
+        <span class="nav-dot" style="background:var(--pink)"></span> ER-диаграмма
+      </a>
+      <a class="nav-item" href="#functions" onclick="scrollToSection('functions')">
+        <span class="nav-dot" style="background:var(--green)"></span> Функции <span class="nav-count">8</span>
+      </a>
+      <a class="nav-item" href="#rls" onclick="scrollToSection('rls')">
+        <span class="nav-dot" style="background:var(--red)"></span> RLS
+      </a>
+    </div>
+    <div class="sidebar-section" style="margin-top:16px">
+      <div class="sidebar-section-title">Таблицы</div>
+      <div id="sidebar-tables"></div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Overview -->
+    <div id="overview" class="section">
+      <div class="page-title">Схема <span class="mono" style="color:var(--accent)">sa</span></div>
+      <div class="page-subtitle">Sales Analytics — Supabase project <span class="mono">kinza</span> &middot; PostgreSQL 17 &middot; eu-north-1</div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--green)">15</div>
+          <div class="stat-label">Таблиц</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--purple)">1</div>
+          <div class="stat-label">View</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--yellow)">5</div>
+          <div class="stat-label">Mat. Views</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--orange)">8</div>
+          <div class="stat-label">Функций</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--pink)">12</div>
+          <div class="stat-label">FK-связей</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--text-dim)">67K+</div>
+          <div class="stat-label">Записей</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tables -->
+    <div id="tables" class="section">
+      <div class="section-title">
+        <span class="icon" style="background:rgba(52,211,153,0.12);color:var(--green)">⊞</span>
+        Таблицы
+      </div>
+      <input class="search-box" type="text" placeholder="Поиск по таблицам и колонкам..." id="tableSearch" oninput="filterTables()">
+      <div id="tables-container"></div>
+    </div>
+
+    <!-- Views -->
+    <div id="views" class="section">
+      <div class="section-title">
+        <span class="icon" style="background:rgba(167,139,250,0.12);color:var(--purple)">⊡</span>
+        Views
+      </div>
+      <div class="table-card open">
+        <div class="table-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="table-header-left">
+            <span class="table-name">v_employees_full</span>
+            <span class="table-badge badge-view">VIEW</span>
+          </div>
+          <span class="table-chevron">▾</span>
+        </div>
+        <div class="table-body" style="padding:16px 20px">
+          <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">JOIN сотрудников SA с командами и сотрудниками КИНЗА (через bitrix_id)</p>
+          <table class="cols-table">
+            <thead><tr><th>Колонка</th><th>Источник</th></tr></thead>
+            <tbody>
+              <tr><td class="col-name">sa_employee_id</td><td class="col-type">sa.employees.id</td></tr>
+              <tr><td class="col-name">sa_full_name</td><td class="col-type">sa.employees.full_name</td></tr>
+              <tr><td class="col-name">team_id, team_name</td><td class="col-type">sa.teams</td></tr>
+              <tr><td class="col-name">hire_date, sa_role, bitrix_id, supabase_uid, sa_is_active</td><td class="col-type">sa.employees</td></tr>
+              <tr><td class="col-name">kinza_employee_id, kinza_full_name, phone, email, city_id</td><td class="col-type">public.employees (LEFT JOIN)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Materialized Views -->
+    <div id="matviews" class="section">
+      <div class="section-title">
+        <span class="icon" style="background:rgba(251,191,36,0.12);color:var(--yellow)">◈</span>
+        Materialized Views
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">Обновляются через <span class="mono" style="color:var(--green)">sa.refresh_all_mvs()</span>. Все считают метрики из deal_events + deals + stages + funnels.</p>
+      <div id="matviews-container"></div>
+    </div>
+
+    <!-- REST API -->
+    <div id="api" class="section">
+      <div class="section-title">
+        <span class="icon" style="background:rgba(251,146,60,0.12);color:var(--orange)">↗</span>
+        REST API (PostgREST)
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:8px">Base URL: <span class="mono" style="color:var(--accent)">https://iinmvywgxkyqvkvtjnam.supabase.co/rest/v1/</span></p>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Требуется заголовок <span class="mono">apikey</span> + <span class="mono">Authorization: Bearer &lt;jwt&gt;</span>. Схема sa доступна через заголовок <span class="mono">Accept-Profile: sa</span> / <span class="mono">Content-Profile: sa</span></p>
+
+      <div class="warning-box">
+        <span>⚠</span>
+        <span>RLS отключён на всех таблицах. Доступ контролируется только JWT-ролью (anon/service_role). Для продакшена рекомендуется включить RLS.</span>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="showApiTab('all',this)">Все</button>
+        <button class="tab" onclick="showApiTab('read',this)">Read</button>
+        <button class="tab" onclick="showApiTab('write',this)">Write</button>
+        <button class="tab" onclick="showApiTab('rpc',this)">RPC</button>
+      </div>
+      <div id="api-container"></div>
+    </div>
+
+    <!-- ER Diagram -->
+    <div id="er" class="section">
+      <div class="section-title">
+        <span class="icon" style="background:rgba(244,114,182,0.12);color:var(--pink)">◎</span>
+        ER-диаграмма (FK-связи)
+      </div>
+      <div class="er-container">
+        <svg id="er-svg" class="er-svg" viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Functions -->
+    <div id="functions" class="section">
+      <div class="section-title">
+        <span class="icon" style="background:rgba(52,211,153,0.12);color:var(--green)">ƒ</span>
+        Функции
+      </div>
+      <div id="functions-container"></div>
+    </div>
+
+    <!-- RLS -->
+    <div id="rls" class="section">
+      <div class="section-title">
+        <span class="icon" style="background:rgba(248,113,113,0.12);color:var(--red)">🛡</span>
+        Row Level Security
+      </div>
+      <div class="warning-box">
+        <span>⚠</span>
+        <span>RLS отключён на всех 15 таблицах. Политики безопасности не заданы. Доступ контролируется через JWT-роли и функции авторизации (check_sa_permission, get_sa_role и др.).</span>
+      </div>
+      <div class="rls-grid" id="rls-grid"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ==================== DATA ====================
+const tables = [
+  {
+    name: "teams", rows: 4, comment: "Отделы продаж",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "name", type: "varchar(100)", pk: false, nn: true, default: null, fk: null },
+      { name: "is_active", type: "bool", pk: false, nn: true, default: "true", fk: null }
+    ]
+  },
+  {
+    name: "employees", rows: 0, comment: "Сотрудники (менеджеры, РОП, директора)",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "full_name", type: "varchar(200)", pk: false, nn: true, default: null, fk: null },
+      { name: "team_id", type: "int4", pk: false, nn: true, default: null, fk: "teams.id" },
+      { name: "hire_date", type: "date", pk: false, nn: false, default: null, fk: null },
+      { name: "role", type: "varchar(20)", pk: false, nn: true, default: "'manager'", fk: null },
+      { name: "bitrix_id", type: "int4", pk: false, nn: false, default: null, fk: null, uq: true },
+      { name: "supabase_uid", type: "uuid", pk: false, nn: false, default: null, fk: null, uq: true },
+      { name: "is_active", type: "bool", pk: false, nn: true, default: "true", fk: null }
+    ]
+  },
+  {
+    name: "funnels", rows: 6, comment: "Воронки продаж",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "name", type: "varchar(100)", pk: false, nn: true, default: null, fk: null },
+      { name: "is_repeat", type: "bool", pk: false, nn: true, default: "false", fk: null }
+    ]
+  },
+  {
+    name: "stages", rows: 73, comment: "Стадии воронок",
+    columns: [
+      { name: "id", type: "text", pk: true, nn: true, default: null, fk: null },
+      { name: "funnel_id", type: "int4", pk: false, nn: true, default: null, fk: "funnels.id" },
+      { name: "name", type: "varchar(200)", pk: false, nn: true, default: null, fk: null },
+      { name: "event_type", type: "varchar(50)", pk: false, nn: true, default: null, fk: null },
+      { name: "sort_order", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "stage_type", type: "varchar(10)", pk: false, nn: false, default: null, fk: null },
+      { name: "stage_color", type: "text", pk: false, nn: false, default: null, fk: null },
+      { name: "created_at", type: "timestamptz", pk: false, nn: false, default: "now()", fk: null }
+    ]
+  },
+  {
+    name: "product_groups", rows: 90, comment: "Товарные группы",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "name", type: "varchar(200)", pk: false, nn: true, default: null, fk: null },
+      { name: "is_active", type: "bool", pk: false, nn: true, default: "true", fk: null }
+    ]
+  },
+  {
+    name: "deals", rows: 15946, comment: "Сделки (из Bitrix24)",
+    columns: [
+      { name: "deal_id", type: "int4", pk: true, nn: true, default: null, fk: null },
+      { name: "deal_name", type: "varchar(500)", pk: false, nn: false, default: null, fk: null },
+      { name: "deal_type", type: "varchar(50)", pk: false, nn: true, default: null, fk: null },
+      { name: "stage_id", type: "text", pk: false, nn: true, default: null, fk: "stages.id" },
+      { name: "amount", type: "numeric", pk: false, nn: true, default: null, fk: null },
+      { name: "funnel_id", type: "int4", pk: false, nn: true, default: null, fk: "funnels.id" },
+      { name: "product_group_id", type: "int4", pk: false, nn: false, default: null, fk: "product_groups.id" },
+      { name: "is_reserved", type: "bool", pk: false, nn: true, default: "false", fk: null },
+      { name: "current_manager_id", type: "int4", pk: false, nn: true, default: null, fk: null },
+      { name: "manager_history", type: "text", pk: false, nn: false, default: null, fk: null },
+      { name: "team_id", type: "int4", pk: false, nn: false, default: null, fk: null },
+      { name: "expected_close_date", type: "date", pk: false, nn: false, default: null, fk: null },
+      { name: "created_at", type: "timestamptz", pk: false, nn: true, default: "now()", fk: null },
+      { name: "updated_at", type: "timestamptz", pk: false, nn: true, default: "now()", fk: null },
+      { name: "lead_id", type: "int4", pk: false, nn: false, default: null, fk: null },
+      { name: "contact_id", type: "int4", pk: false, nn: false, default: null, fk: null },
+      { name: "company_id", type: "int4", pk: false, nn: false, default: null, fk: null }
+    ]
+  },
+  {
+    name: "deal_events", rows: 51122, comment: "Журнал событий по сделкам",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "deal_id", type: "int4", pk: false, nn: true, default: null, fk: "deals.deal_id" },
+      { name: "stage_id", type: "text", pk: false, nn: true, default: null, fk: "stages.id" },
+      { name: "event_at", type: "timestamptz", pk: false, nn: true, default: "now()", fk: null },
+      { name: "manager_id", type: "int4", pk: false, nn: true, default: null, fk: null },
+      { name: "amount_at_event", type: "numeric", pk: false, nn: false, default: null, fk: null },
+      { name: "recorded_at", type: "timestamptz", pk: false, nn: true, default: "now()", fk: null }
+    ]
+  },
+  {
+    name: "daily_sales", rows: 0, comment: "Дневные агрегаты продаж (legacy/ручной ввод)",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "report_date", type: "date", pk: false, nn: true, default: null, fk: null, uq: "composite" },
+      { name: "team_id", type: "int4", pk: false, nn: true, default: null, fk: "teams.id", uq: "composite" },
+      { name: "manager_id", type: "int4", pk: false, nn: true, default: null, fk: "employees.id", uq: "composite" },
+      { name: "incoming_deals_count", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "called_deals_count", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "reservations_count", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "primary_sales_count", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "primary_sales_amount", type: "numeric", pk: false, nn: true, default: "0", fk: null },
+      { name: "repeat_sales_amount", type: "numeric", pk: false, nn: true, default: "0", fk: null },
+      { name: "primary_shipments_count", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "primary_shipments_amount", type: "numeric", pk: false, nn: true, default: "0", fk: null },
+      { name: "repeat_shipments_amount", type: "numeric", pk: false, nn: true, default: "0", fk: null },
+      { name: "ppp_count", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "ppp_amount", type: "numeric", pk: false, nn: true, default: "0", fk: null },
+      { name: "confirmed_reservations_count", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "repeat_sales_count", type: "int4", pk: false, nn: true, default: "0", fk: null }
+    ]
+  },
+  {
+    name: "sales_plans", rows: 0, comment: "Планы продаж по менеджерам",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "manager_id", type: "int4", pk: false, nn: true, default: null, fk: "employees.id", uq: "composite" },
+      { name: "period", type: "date", pk: false, nn: true, default: null, fk: null, uq: "composite" },
+      { name: "sales_plan", type: "numeric", pk: false, nn: true, default: "0", fk: null },
+      { name: "shipments_plan", type: "numeric", pk: false, nn: true, default: "0", fk: null },
+      { name: "updated_by", type: "int4", pk: false, nn: false, default: null, fk: "employees.id" },
+      { name: "updated_at", type: "timestamptz", pk: false, nn: true, default: "now()", fk: null }
+    ]
+  },
+  {
+    name: "import_history", rows: 2, comment: "История импортов данных",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "filename", type: "varchar(500)", pk: false, nn: true, default: null, fk: null },
+      { name: "file_size", type: "int4", pk: false, nn: false, default: null, fk: null },
+      { name: "rows_total", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "rows_imported", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "rows_updated", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "rows_errors", type: "int4", pk: false, nn: true, default: "0", fk: null },
+      { name: "error_details", type: "jsonb", pk: false, nn: false, default: null, fk: null },
+      { name: "status", type: "varchar(20)", pk: false, nn: true, default: "'pending'", fk: null },
+      { name: "imported_by", type: "int4", pk: false, nn: false, default: null, fk: "employees.id" },
+      { name: "started_at", type: "timestamptz", pk: false, nn: true, default: "now()", fk: null },
+      { name: "completed_at", type: "timestamptz", pk: false, nn: false, default: null, fk: null }
+    ]
+  },
+  {
+    name: "metrics", rows: 27, comment: "Каталог метрик для отчётов",
+    columns: [
+      { name: "id", type: "varchar(80)", pk: true, nn: true, default: null, fk: null },
+      { name: "name_ru", type: "varchar(200)", pk: false, nn: true, default: null, fk: null },
+      { name: "name_short_ru", type: "varchar(50)", pk: false, nn: false, default: null, fk: null },
+      { name: "metric_type", type: "varchar(20)", pk: false, nn: true, default: null, fk: null },
+      { name: "data_type", type: "varchar(20)", pk: false, nn: true, default: null, fk: null },
+      { name: "aggregation", type: "jsonb", pk: false, nn: false, default: null, fk: null },
+      { name: "source", type: "varchar(100)", pk: false, nn: false, default: null, fk: null },
+      { name: "source_column", type: "varchar(100)", pk: false, nn: false, default: null, fk: null },
+      { name: "formula", type: "text", pk: false, nn: false, default: null, fk: null },
+      { name: "dependencies", type: "text[]", pk: false, nn: false, default: null, fk: null },
+      { name: "decimal_places", type: "int4", pk: false, nn: false, default: "0", fk: null },
+      { name: "color_rules", type: "jsonb", pk: false, nn: false, default: "'[]'", fk: null },
+      { name: "aggregation_fn", type: "varchar(20)", pk: false, nn: false, default: "'sum'", fk: null },
+      { name: "category", type: "varchar(50)", pk: false, nn: false, default: null, fk: null },
+      { name: "sort_order", type: "int4", pk: false, nn: false, default: "0", fk: null },
+      { name: "is_core", type: "bool", pk: false, nn: false, default: "false", fk: null },
+      { name: "is_active", type: "bool", pk: false, nn: false, default: "true", fk: null },
+      { name: "created_at", type: "timestamptz", pk: false, nn: false, default: "now()", fk: null }
+    ]
+  },
+  {
+    name: "data_sources", rows: 5, comment: "Реестр источников данных для отчётов",
+    columns: [
+      { name: "id", type: "varchar(50)", pk: true, nn: true, default: null, fk: null },
+      { name: "name_ru", type: "varchar(200)", pk: false, nn: true, default: null, fk: null },
+      { name: "table_or_view", type: "varchar(100)", pk: false, nn: true, default: null, fk: null },
+      { name: "available_dimensions", type: "jsonb", pk: false, nn: true, default: null, fk: null },
+      { name: "available_filters", type: "jsonb", pk: false, nn: true, default: null, fk: null },
+      { name: "date_column", type: "varchar(100)", pk: false, nn: false, default: null, fk: null },
+      { name: "date_granularity", type: "varchar(20)", pk: false, nn: false, default: "'day'", fk: null },
+      { name: "label_joins", type: "jsonb", pk: false, nn: false, default: "'[]'", fk: null },
+      { name: "refresh_interval", type: "varchar(20)", pk: false, nn: false, default: null, fk: null },
+      { name: "is_auto_generated", type: "bool", pk: false, nn: false, default: "false", fk: null },
+      { name: "is_active", type: "bool", pk: false, nn: false, default: "true", fk: null },
+      { name: "created_at", type: "timestamptz", pk: false, nn: false, default: "now()", fk: null }
+    ]
+  },
+  {
+    name: "report_configs", rows: 11, comment: "Конфигурации отчётов",
+    columns: [
+      { name: "id", type: "uuid", pk: true, nn: true, default: "gen_random_uuid()", fk: null },
+      { name: "slug", type: "varchar(100)", pk: false, nn: true, default: null, fk: null, uq: true },
+      { name: "name_ru", type: "varchar(200)", pk: false, nn: true, default: null, fk: null },
+      { name: "icon", type: "varchar(50)", pk: false, nn: false, default: "'BarChart3'", fk: null },
+      { name: "metric_ids", type: "text[]", pk: false, nn: true, default: null, fk: null },
+      { name: "group_by", type: "text[]", pk: false, nn: true, default: null, fk: null },
+      { name: "label_columns", type: "jsonb", pk: false, nn: true, default: "'[]'", fk: null },
+      { name: "primary_source", type: "varchar(100)", pk: false, nn: true, default: null, fk: null },
+      { name: "joins", type: "jsonb", pk: false, nn: false, default: "'[]'", fk: null },
+      { name: "comparison_mode", type: "varchar(20)", pk: false, nn: false, default: "'single'", fk: null },
+      { name: "comparison_labels", type: "jsonb", pk: false, nn: false, default: null, fk: null },
+      { name: "available_filters", type: "text[]", pk: false, nn: false, default: "['date_range','team_id']", fk: null },
+      { name: "default_filters", type: "jsonb", pk: false, nn: false, default: "'{}'", fk: null },
+      { name: "default_sort_by", type: "varchar(100)", pk: false, nn: false, default: null, fk: null },
+      { name: "default_sort_dir", type: "varchar(4)", pk: false, nn: false, default: "'desc'", fk: null },
+      { name: "allowed_roles", type: "text[]", pk: false, nn: false, default: "['director','rop','manager']", fk: null },
+      { name: "role_scoping", type: "jsonb", pk: false, nn: false, default: "'{}'", fk: null },
+      { name: "show_totals_row", type: "bool", pk: false, nn: false, default: "true", fk: null },
+      { name: "summary_row", type: "jsonb", pk: false, nn: false, default: null, fk: null },
+      { name: "sticky_columns", type: "int4", pk: false, nn: false, default: "1", fk: null },
+      { name: "is_system", type: "bool", pk: false, nn: false, default: "true", fk: null },
+      { name: "sort_order", type: "int4", pk: false, nn: false, default: "0", fk: null },
+      { name: "created_at", type: "timestamptz", pk: false, nn: false, default: "now()", fk: null }
+    ]
+  },
+  {
+    name: "permissions", rows: 7, comment: "Справочник прав доступа",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "permission_key", type: "varchar(100)", pk: false, nn: true, default: null, fk: null, uq: true },
+      { name: "description", type: "text", pk: false, nn: false, default: null, fk: null },
+      { name: "created_at", type: "timestamptz", pk: false, nn: false, default: "now()", fk: null }
+    ]
+  },
+  {
+    name: "role_permissions", rows: 9, comment: "Связь ролей с правами (RBAC)",
+    columns: [
+      { name: "id", type: "int4", pk: true, nn: true, default: "serial", fk: null },
+      { name: "sa_role", type: "varchar(20)", pk: false, nn: true, default: null, fk: null, uq: "composite" },
+      { name: "permission_key", type: "varchar(100)", pk: false, nn: true, default: null, fk: "permissions.permission_key", uq: "composite" },
+      { name: "scope", type: "varchar(20)", pk: false, nn: false, default: null, fk: null }
+    ]
+  }
+];
+
+const matviews = [
+  { name: "mv_daily_summary", desc: "Дневные итоги по командам", groupBy: "report_date, team_id" },
+  { name: "mv_manager_daily", desc: "Дневные итоги по менеджерам", groupBy: "manager_id, team_id, report_date" },
+  { name: "mv_manager_summary", desc: "Месячные итоги по менеджерам", groupBy: "manager_id, team_id, period_start" },
+  { name: "mv_product_report", desc: "Месячные итоги по товарным группам", groupBy: "product_group_id, manager_id, team_id, period_start" },
+  { name: "mv_team_comparison", desc: "Месячное сравнение команд", groupBy: "team_id, period_start" }
+];
+
+const mvMetrics = [
+  "incoming_deals_count", "called_deals_count", "reservations_count", "confirmed_reservations_count",
+  "primary_sales_count", "repeat_sales_count", "primary_shipments_count",
+  "primary_sales_amount", "repeat_sales_amount", "primary_shipments_amount", "repeat_shipments_amount"
+];
+
+const functions = [
+  { name: "get_sa_role", args: "p_user_id uuid", ret: "varchar", sec: true, desc: "Получить SA-роль пользователя" },
+  { name: "get_sa_employee_id", args: "p_user_id uuid", ret: "integer", sec: true, desc: "Получить employee_id по auth.uid()" },
+  { name: "get_sa_team_id", args: "p_user_id uuid", ret: "integer", sec: true, desc: "Получить team_id сотрудника" },
+  { name: "check_sa_permission", args: "p_user_id uuid, p_permission_key varchar", ret: "boolean", sec: true, desc: "Проверить наличие прав у пользователя" },
+  { name: "get_sa_permission_scope", args: "p_user_id uuid, p_permission_key varchar", ret: "varchar", sec: true, desc: "Получить scope для конкретного права" },
+  { name: "refresh_all_mvs", args: "", ret: "void", sec: false, desc: "Обновить все materialized views" },
+  { name: "update_deals_updated_at", args: "", ret: "trigger", sec: false, desc: "Триггер: обновление updated_at в deals" },
+  { name: "update_sales_plans_updated_at", args: "", ret: "trigger", sec: false, desc: "Триггер: обновление updated_at в sales_plans" }
+];
+
+const fkRelations = [
+  { from: "daily_sales", fromCol: "team_id", to: "teams", toCol: "id" },
+  { from: "daily_sales", fromCol: "manager_id", to: "employees", toCol: "id" },
+  { from: "deal_events", fromCol: "deal_id", to: "deals", toCol: "deal_id" },
+  { from: "deal_events", fromCol: "stage_id", to: "stages", toCol: "id" },
+  { from: "deals", fromCol: "product_group_id", to: "product_groups", toCol: "id" },
+  { from: "deals", fromCol: "stage_id", to: "stages", toCol: "id" },
+  { from: "deals", fromCol: "funnel_id", to: "funnels", toCol: "id" },
+  { from: "import_history", fromCol: "imported_by", to: "employees", toCol: "id" },
+  { from: "role_permissions", fromCol: "permission_key", to: "permissions", toCol: "permission_key" },
+  { from: "sales_plans", fromCol: "manager_id", to: "employees", toCol: "id" },
+  { from: "sales_plans", fromCol: "updated_by", to: "employees", toCol: "id" },
+  { from: "stages", fromCol: "funnel_id", to: "funnels", toCol: "id" }
+];
+
+// ==================== RENDER ====================
+
+// Sidebar tables
+const sidebarTables = document.getElementById('sidebar-tables');
+tables.forEach(t => {
+  const el = document.createElement('a');
+  el.className = 'nav-item';
+  el.href = '#tbl-' + t.name;
+  el.onclick = () => { scrollToSection('tbl-' + t.name); openTableCard(t.name); };
+  el.innerHTML = `<span class="nav-dot" style="background:var(--green)"></span>
+    <span class="mono" style="font-size:12px">${t.name}</span>
+    <span class="nav-count">${t.rows.toLocaleString()}</span>`;
+  sidebarTables.appendChild(el);
+});
+
+// Tables
+const tablesContainer = document.getElementById('tables-container');
+tables.forEach(t => {
+  const card = document.createElement('div');
+  card.className = 'table-card';
+  card.id = 'tbl-' + t.name;
+  card.dataset.name = t.name;
+  card.dataset.cols = t.columns.map(c=>c.name).join(' ');
+
+  let colsHtml = t.columns.map(c => {
+    let badges = '';
+    if (c.pk) badges += '<span class="col-constraint pk">PK</span>';
+    if (c.fk) badges += '<span class="col-constraint fk">FK</span>';
+    if (c.uq === true) badges += '<span class="col-constraint uq">UQ</span>';
+    if (c.nn) badges += '<span class="col-constraint nn">NN</span>';
+    let fkLink = c.fk ? `<br><span class="col-fk-link" onclick="scrollToSection('tbl-${c.fk.split('.')[0]}');openTableCard('${c.fk.split('.')[0]}')">→ ${c.fk}</span>` : '';
+    return `<tr>
+      <td><span class="col-name">${c.name}</span></td>
+      <td><span class="col-type">${c.type}</span></td>
+      <td>${badges}</td>
+      <td><span class="col-default">${c.default || '—'}</span>${fkLink}</td>
+    </tr>`;
+  }).join('');
+
+  card.innerHTML = `
+    <div class="table-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="table-header-left">
+        <span class="table-name">${t.name}</span>
+        <span class="table-badge badge-table">TABLE</span>
+        <span class="badge-rows">${t.rows.toLocaleString()} rows</span>
+        ${t.comment ? `<span style="font-size:12px;color:var(--text-muted)">${t.comment}</span>` : ''}
+      </div>
+      <span class="table-chevron">▾</span>
+    </div>
+    <div class="table-body">
+      <table class="cols-table">
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Default / FK</th></tr></thead>
+        <tbody>${colsHtml}</tbody>
+      </table>
+    </div>`;
+  tablesContainer.appendChild(card);
+});
+
+// Materialized views
+const mvContainer = document.getElementById('matviews-container');
+matviews.forEach(mv => {
+  const card = document.createElement('div');
+  card.className = 'table-card';
+  card.innerHTML = `
+    <div class="table-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="table-header-left">
+        <span class="table-name">${mv.name}</span>
+        <span class="table-badge badge-matview">MATVIEW</span>
+        <span style="font-size:12px;color:var(--text-muted)">${mv.desc}</span>
+      </div>
+      <span class="table-chevron">▾</span>
+    </div>
+    <div class="table-body" style="padding:16px 20px">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">
+        <strong>GROUP BY:</strong> <span class="mono" style="color:var(--yellow)">${mv.groupBy}</span>
+      </p>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px"><strong>Метрики:</strong></p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        ${mvMetrics.map(m => `<span style="font-family:'JetBrains Mono';font-size:11px;background:var(--bg);padding:2px 8px;border-radius:4px;color:var(--text-dim)">${m}</span>`).join('')}
+      </div>
+    </div>`;
+  mvContainer.appendChild(card);
+});
+
+// REST API
+function renderApi(filter) {
+  const c = document.getElementById('api-container');
+  c.innerHTML = '';
+
+  const allTables = tables.map(t => t.name);
+
+  if (filter === 'all' || filter === 'read') {
+    allTables.forEach(t => {
+      c.innerHTML += `<div class="endpoint-card" data-type="read">
+        <div class="endpoint-line">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/rest/v1/<strong>${t}</strong>?select=*</span>
+        </div>
+        <div class="endpoint-desc">Получить записи из ${t}. Фильтры: ?column=eq.value, ?order=col.asc, ?limit=N</div>
+      </div>`;
+    });
+  }
+
+  if (filter === 'all' || filter === 'write') {
+    allTables.forEach(t => {
+      c.innerHTML += `<div class="endpoint-card" data-type="write">
+        <div class="endpoint-line">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/rest/v1/<strong>${t}</strong></span>
+        </div>
+        <div class="endpoint-desc">Создать запись. Prefer: return=representation для получения результата</div>
+      </div>`;
+      c.innerHTML += `<div class="endpoint-card" data-type="write">
+        <div class="endpoint-line">
+          <span class="method-badge method-patch">PATCH</span>
+          <span class="endpoint-path">/rest/v1/<strong>${t}</strong>?id=eq.{id}</span>
+        </div>
+        <div class="endpoint-desc">Обновить записи по фильтру</div>
+      </div>`;
+      c.innerHTML += `<div class="endpoint-card" data-type="write">
+        <div class="endpoint-line">
+          <span class="method-badge method-delete">DELETE</span>
+          <span class="endpoint-path">/rest/v1/<strong>${t}</strong>?id=eq.{id}</span>
+        </div>
+        <div class="endpoint-desc">Удалить записи по фильтру</div>
+      </div>`;
+    });
+  }
+
+  if (filter === 'all' || filter === 'rpc') {
+    functions.filter(f => f.ret !== 'trigger').forEach(f => {
+      c.innerHTML += `<div class="endpoint-card" data-type="rpc">
+        <div class="endpoint-line">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/rest/v1/rpc/<strong>${f.name}</strong></span>
+        </div>
+        <div class="endpoint-desc">${f.desc}. Params: { ${f.args.split(',').map(a=>'"'+a.trim().split(' ')[0]+'"').join(', ')} }</div>
+      </div>`;
+    });
+  }
+}
+renderApi('all');
+
+function showApiTab(type, btn) {
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderApi(type);
+}
+
+// Functions
+const funcContainer = document.getElementById('functions-container');
+functions.forEach(f => {
+  funcContainer.innerHTML += `<div class="func-card">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="func-sig">
+        <span class="func-name">${f.name}</span><span class="func-args">(${f.args || ''})</span>
+      </span>
+      <span class="func-ret">→ ${f.ret}</span>
+      ${f.sec ? '<span class="func-badge">SECURITY DEFINER</span>' : ''}
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:6px">${f.desc}</div>
+  </div>`;
+});
+
+// RLS
+const rlsGrid = document.getElementById('rls-grid');
+tables.forEach(t => {
+  rlsGrid.innerHTML += `<div class="rls-item">
+    <span class="rls-dot rls-off"></span>
+    <span class="mono" style="font-size:12px">${t.name}</span>
+  </div>`;
+});
+
+// ER Diagram
+function drawER() {
+  const svg = document.getElementById('er-svg');
+  const nodes = {};
+  const erTables = ["teams","employees","funnels","stages","product_groups","deals","deal_events","daily_sales","sales_plans","import_history","permissions","role_permissions"];
+
+  // Position nodes in a logical layout
+  const positions = {
+    teams:          { x: 60,  y: 60 },
+    employees:      { x: 60,  y: 180 },
+    funnels:        { x: 340, y: 60 },
+    stages:         { x: 340, y: 180 },
+    product_groups: { x: 600, y: 60 },
+    deals:          { x: 480, y: 300 },
+    deal_events:    { x: 220, y: 420 },
+    daily_sales:    { x: 60,  y: 340 },
+    sales_plans:    { x: 60,  y: 460 },
+    import_history: { x: 720, y: 300 },
+    permissions:    { x: 720, y: 180 },
+    role_permissions:{ x: 720, y: 60 }
+  };
+
+  const W = 150, H = 36;
+
+  // Draw links first
+  fkRelations.forEach(r => {
+    if (!positions[r.from] || !positions[r.to]) return;
+    const fx = positions[r.from].x + W/2, fy = positions[r.from].y + H/2;
+    const tx = positions[r.to].x + W/2, ty = positions[r.to].y + H/2;
+    const mx = (fx+tx)/2, my = (fy+ty)/2;
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    path.setAttribute("d",`M${fx},${fy} Q${mx},${fy} ${mx},${my} Q${mx},${ty} ${tx},${ty}`);
+    path.setAttribute("class","er-link");
+    svg.appendChild(path);
+  });
+
+  // Draw nodes
+  erTables.forEach(name => {
+    if (!positions[name]) return;
+    const p = positions[name];
+    const g = document.createElementNS("http://www.w3.org/2000/svg","g");
+    g.setAttribute("class","er-node");
+    g.setAttribute("transform",`translate(${p.x},${p.y})`);
+
+    const rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+    rect.setAttribute("width", W);
+    rect.setAttribute("height", H);
+    g.appendChild(rect);
+
+    const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+    text.setAttribute("x", W/2);
+    text.setAttribute("y", H/2 + 4);
+    text.setAttribute("text-anchor","middle");
+    text.setAttribute("class","name");
+    text.textContent = name;
+    g.appendChild(text);
+
+    g.onclick = () => { scrollToSection('tbl-'+name); openTableCard(name); };
+    svg.appendChild(g);
+  });
+}
+drawER();
+
+// ==================== HELPERS ====================
+
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function openTableCard(name) {
+  const card = document.querySelector(`[data-name="${name}"]`);
+  if (card && !card.classList.contains('open')) card.classList.add('open');
+}
+
+function filterTables() {
+  const q = document.getElementById('tableSearch').value.toLowerCase();
+  document.querySelectorAll('.table-card').forEach(card => {
+    const name = (card.dataset.name || '').toLowerCase();
+    const cols = (card.dataset.cols || '').toLowerCase();
+    card.style.display = (!q || name.includes(q) || cols.includes(q)) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

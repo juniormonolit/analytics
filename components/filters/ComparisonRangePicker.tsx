@@ -1,0 +1,87 @@
+"use client";
+
+import * as Popover from "@radix-ui/react-popover";
+import { CalendarClock } from "lucide-react";
+import { useState } from "react";
+
+import { useFiltersStore } from "@/features/sales/state/filtersStore";
+import { formatPeriodRu } from "@/lib/period/format";
+import type { DateString, Period } from "@/lib/period/types";
+
+import {
+  CalendarMonth,
+  visibleMonthFromPeriod,
+} from "./CalendarMonth";
+import { DateRangePresets } from "./DateRangePresets";
+import { orderRange, RANGE_PICKER_TRIGGER_CLASS } from "./rangePickerShared";
+
+export function ComparisonRangePicker() {
+  const comparisonPeriod = useFiltersStore((s) => s.comparisonPeriod);
+  const setComparisonPeriod = useFiltersStore((s) => s.setComparisonPeriod);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [visibleMonth, setVisibleMonth] = useState<Date>(() =>
+    visibleMonthFromPeriod(comparisonPeriod),
+  );
+  const [pendingStart, setPendingStart] = useState<DateString | null>(null);
+
+  const today = new Date();
+
+  const handleDayClick = (day: DateString) => {
+    if (pendingStart === null) {
+      setPendingStart(day);
+      return;
+    }
+    setComparisonPeriod(orderRange(pendingStart, day));
+    setPendingStart(null);
+    setIsOpen(false);
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    setIsOpen(next);
+    if (next) {
+      setVisibleMonth(visibleMonthFromPeriod(comparisonPeriod));
+      setPendingStart(null);
+    }
+  };
+
+  const handlePreset = (presetFn: (today: Date) => Period) => {
+    const nextPeriod = presetFn(today);
+    setComparisonPeriod(nextPeriod);
+    setVisibleMonth(visibleMonthFromPeriod(nextPeriod));
+    setPendingStart(null);
+    setIsOpen(false);
+  };
+
+  return (
+    <Popover.Root open={isOpen} onOpenChange={handleOpenChange}>
+      <Popover.Trigger asChild>
+        <button type="button" className={RANGE_PICKER_TRIGGER_CLASS}>
+          <CalendarClock className="h-4 w-4 shrink-0 text-text-secondary" aria-hidden />
+          <span className="text-text-muted">Сравнение:</span>
+          <span>{formatPeriodRu(comparisonPeriod)}</span>
+        </button>
+      </Popover.Trigger>
+
+      <Popover.Portal>
+        <Popover.Content
+          align="start"
+          sideOffset={6}
+          className="z-50 rounded-lg border border-border-primary bg-popover-bg p-3 shadow-[var(--shadow-md)]"
+        >
+          <div className="flex gap-3">
+            <CalendarMonth
+              visibleMonth={visibleMonth}
+              onVisibleMonthChange={setVisibleMonth}
+              selection={comparisonPeriod}
+              pendingStart={pendingStart}
+              today={today}
+              onDayClick={handleDayClick}
+            />
+            <DateRangePresets onSelect={(preset) => handlePreset(preset.fn)} />
+          </div>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+}

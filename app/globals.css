@@ -1,0 +1,542 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   Design tokens — порт из design/design-system-light-dark-theme.md
+   :root         — Light theme (по умолчанию)
+   [data-theme="dark"] — Dark theme overrides
+   ========================================================================== */
+
+:root {
+  /* Background */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-tertiary: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(15, 23, 42, 0.6);
+
+  /* Gradients (screenshot-like) */
+  --gradient-app-bg: linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f1f5f9 100%);
+  --gradient-surface: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(248, 250, 252, 0.92) 55%,
+    rgba(241, 245, 249, 0.92) 100%
+  );
+  --gradient-card: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+  --text-link: #2563eb;
+  --text-link-hover: #1d4ed8;
+  --text-on-accent: #ffffff;
+  --text-placeholder: #94a3b8;
+
+  /* Border */
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-strong: #94a3b8;
+  --border-focus: #3b82f6;
+
+  /* Accent */
+  --accent-primary: #3b82f6;
+  --accent-secondary: #6366f1;
+  --accent-hover: #2563eb;
+  --accent-soft: #dbeafe;
+
+  /* Status */
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --success-border: #86efac;
+  --warning: #d97706;
+  --warning-bg: #fef3c7;
+  --warning-border: #fcd34d;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+  --danger-border: #fca5a5;
+  --info: #0284c7;
+  --info-bg: #e0f2fe;
+  --info-border: #7dd3fc;
+
+  /* Chart Colors */
+  --chart-1: #3b82f6;
+  --chart-2: #10b981;
+  --chart-3: #f59e0b;
+  --chart-4: #ef4444;
+  --chart-5: #8b5cf6;
+  --chart-6: #14b8a6;
+  --chart-grid: #e2e8f0;
+  --chart-axis: #94a3b8;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #e2e8f0;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.2);
+
+  /* Softer "floating" shadows (for screenshot-like cards) */
+  --shadow-soft-sm: 0 6px 18px rgba(15, 23, 42, 0.06);
+  --shadow-soft-md: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --shadow-soft-lg: 0 18px 60px rgba(15, 23, 42, 0.12);
+
+  /* Radius */
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-3xl: 28px;
+
+  /* Interactive */
+  --hover: rgba(0, 0, 0, 0.04);
+  --active: rgba(0, 0, 0, 0.08);
+  --disabled-bg: #e2e8f0;
+  --disabled-text: #94a3b8;
+  --skeleton: #e2e8f0;
+  --skeleton-shimmer: #f8fafc;
+
+  /* Scrollbar */
+  --scrollbar-track: #e2e8f0;
+  --scrollbar-thumb: #94a3b8;
+  --scrollbar-thumb-hover: #64748b;
+  --scrollbar-thumb-active: #475569;
+  --scrollbar-corner: #e2e8f0;
+
+  /* Selection */
+  --selection-bg: #bfdbfe;
+  --selection-text: #0f172a;
+
+  /* Input / Form */
+  --input-bg: #ffffff;
+  --input-bg-hover: #f8fafc;
+  --input-border: #cbd5e1;
+  --input-border-hover: #94a3b8;
+  --input-border-focus: #3b82f6;
+  --input-text: #0f172a;
+  --input-placeholder: #94a3b8;
+  --input-disabled-bg: #f1f5f9;
+  --input-disabled-text: #94a3b8;
+
+  /* Table */
+  --table-bg: #ffffff;
+  --table-header-bg: #f8fafc;
+  --table-row-hover: #f8fafc;
+  --table-row-selected: #eff6ff;
+  --table-border: #e2e8f0;
+  --table-zebra: #fcfdfe;
+
+  /* Modal / Popover / Tooltip */
+  --modal-bg: #ffffff;
+  --popover-bg: #ffffff;
+  --tooltip-bg: #0f172a;
+  --tooltip-text: #ffffff;
+  --tooltip-border: #1e293b;
+
+  /* Special */
+  --positive: #16a34a;
+  --negative: #dc2626;
+  --neutral: #64748b;
+  --highlight: #fef08a;
+  --highlight-soft: #fef9c3;
+}
+
+[data-theme="dark"] {
+  /* Background */
+  --bg-primary: #0b1220;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1f2937;
+  --bg-card: #0f172a;
+  --bg-card-hover: #111827;
+  --bg-elevated: #111827;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Gradients (screenshot-like) */
+  --gradient-app-bg: linear-gradient(180deg, #0b1220 0%, #0b1730 45%, #0a1020 100%);
+  --gradient-surface: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.92) 0%,
+    rgba(15, 23, 42, 0.92) 55%,
+    rgba(11, 18, 32, 0.92) 100%
+  );
+  --gradient-card: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.92) 0%,
+    rgba(15, 23, 42, 0.92) 100%
+  );
+
+  /* Text */
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --text-inverse: #020617;
+  --text-link: #60a5fa;
+  --text-link-hover: #93c5fd;
+  --text-on-accent: #020617;
+  --text-placeholder: #6b7280;
+
+  /* Border */
+  --border-primary: #1f2937;
+  --border-secondary: #374151;
+  --border-strong: #4b5563;
+  --border-focus: #60a5fa;
+
+  /* Accent */
+  --accent-primary: #60a5fa;
+  --accent-secondary: #818cf8;
+  --accent-hover: #3b82f6;
+  --accent-soft: rgba(96, 165, 250, 0.16);
+
+  /* Status */
+  --success: #22c55e;
+  --success-bg: rgba(34, 197, 94, 0.15);
+  --success-border: rgba(34, 197, 94, 0.35);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --warning-border: rgba(245, 158, 11, 0.35);
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.15);
+  --danger-border: rgba(248, 113, 113, 0.35);
+  --info: #38bdf8;
+  --info-bg: rgba(56, 189, 248, 0.15);
+  --info-border: rgba(56, 189, 248, 0.35);
+
+  /* Chart Colors */
+  --chart-1: #60a5fa;
+  --chart-2: #34d399;
+  --chart-3: #fbbf24;
+  --chart-4: #f87171;
+  --chart-5: #a78bfa;
+  --chart-6: #2dd4bf;
+  --chart-grid: #1f2937;
+  --chart-axis: #6b7280;
+  --chart-tooltip-bg: #111827;
+  --chart-tooltip-border: #374151;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.7);
+  --shadow-focus: 0 0 0 3px rgba(96, 165, 250, 0.25);
+
+  /* Softer "floating" shadows (for screenshot-like cards) */
+  --shadow-soft-sm: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-soft-md: 0 16px 44px rgba(0, 0, 0, 0.45);
+  --shadow-soft-lg: 0 26px 80px rgba(0, 0, 0, 0.55);
+
+  /* Radius */
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-3xl: 28px;
+
+  /* Interactive */
+  --hover: rgba(255, 255, 255, 0.05);
+  --active: rgba(255, 255, 255, 0.1);
+  --disabled-bg: #1f2937;
+  --disabled-text: #6b7280;
+  --skeleton: #1f2937;
+  --skeleton-shimmer: #374151;
+
+  /* Scrollbar */
+  --scrollbar-track: #111827;
+  --scrollbar-thumb: #4b5563;
+  --scrollbar-thumb-hover: #6b7280;
+  --scrollbar-thumb-active: #9ca3af;
+  --scrollbar-corner: #111827;
+
+  /* Selection */
+  --selection-bg: rgba(96, 165, 250, 0.35);
+  --selection-text: #f9fafb;
+
+  /* Input / Form */
+  --input-bg: #0f172a;
+  --input-bg-hover: #111827;
+  --input-border: #374151;
+  --input-border-hover: #4b5563;
+  --input-border-focus: #60a5fa;
+  --input-text: #f9fafb;
+  --input-placeholder: #6b7280;
+  --input-disabled-bg: #111827;
+  --input-disabled-text: #6b7280;
+
+  /* Table */
+  --table-bg: #0f172a;
+  --table-header-bg: #111827;
+  --table-row-hover: #111827;
+  --table-row-selected: rgba(96, 165, 250, 0.12);
+  --table-border: #1f2937;
+  --table-zebra: #0c1424;
+
+  /* Modal / Popover / Tooltip */
+  --modal-bg: #111827;
+  --popover-bg: #111827;
+  --tooltip-bg: #f9fafb;
+  --tooltip-text: #020617;
+  --tooltip-border: #d1d5db;
+
+  /* Special */
+  --positive: #22c55e;
+  --negative: #f87171;
+  --neutral: #9ca3af;
+  --highlight: rgba(250, 204, 21, 0.2);
+  --highlight-soft: rgba(250, 204, 21, 0.12);
+}
+
+/* =============================================================================
+   Tailwind theme integration — exposes tokens as Tailwind utilities.
+   `bg-bg-primary`, `text-text-primary`, `border-border-primary`,
+   `bg-accent-primary`, `bg-success`, `bg-table-header-bg`, etc.
+   ========================================================================== */
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  /* Background */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-bg-card: var(--bg-card);
+  --color-bg-card-hover: var(--bg-card-hover);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-overlay: var(--bg-overlay);
+
+  /* Text */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+  --color-text-link: var(--text-link);
+  --color-text-link-hover: var(--text-link-hover);
+  --color-text-on-accent: var(--text-on-accent);
+  --color-text-placeholder: var(--text-placeholder);
+
+  /* Border */
+  --color-border-primary: var(--border-primary);
+  --color-border-secondary: var(--border-secondary);
+  --color-border-strong: var(--border-strong);
+  --color-border-focus: var(--border-focus);
+
+  /* Accent */
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+
+  /* Status */
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-border: var(--danger-border);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-info-border: var(--info-border);
+
+  /* Chart */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-grid: var(--chart-grid);
+  --color-chart-axis: var(--chart-axis);
+  --color-chart-tooltip-bg: var(--chart-tooltip-bg);
+  --color-chart-tooltip-border: var(--chart-tooltip-border);
+
+  /* Interactive */
+  --color-hover: var(--hover);
+  --color-active: var(--active);
+  --color-disabled-bg: var(--disabled-bg);
+  --color-disabled-text: var(--disabled-text);
+  --color-skeleton: var(--skeleton);
+  --color-skeleton-shimmer: var(--skeleton-shimmer);
+
+  /* Scrollbar */
+  --color-scrollbar-track: var(--scrollbar-track);
+  --color-scrollbar-thumb: var(--scrollbar-thumb);
+  --color-scrollbar-thumb-hover: var(--scrollbar-thumb-hover);
+  --color-scrollbar-thumb-active: var(--scrollbar-thumb-active);
+  --color-scrollbar-corner: var(--scrollbar-corner);
+
+  /* Selection */
+  --color-selection-bg: var(--selection-bg);
+  --color-selection-text: var(--selection-text);
+
+  /* Input */
+  --color-input-bg: var(--input-bg);
+  --color-input-bg-hover: var(--input-bg-hover);
+  --color-input-border: var(--input-border);
+  --color-input-border-hover: var(--input-border-hover);
+  --color-input-border-focus: var(--input-border-focus);
+  --color-input-text: var(--input-text);
+  --color-input-placeholder: var(--input-placeholder);
+  --color-input-disabled-bg: var(--input-disabled-bg);
+  --color-input-disabled-text: var(--input-disabled-text);
+
+  /* Table */
+  --color-table-bg: var(--table-bg);
+  --color-table-header-bg: var(--table-header-bg);
+  --color-table-row-hover: var(--table-row-hover);
+  --color-table-row-selected: var(--table-row-selected);
+  --color-table-border: var(--table-border);
+  --color-table-zebra: var(--table-zebra);
+
+  /* Modal / Popover / Tooltip */
+  --color-modal-bg: var(--modal-bg);
+  --color-popover-bg: var(--popover-bg);
+  --color-tooltip-bg: var(--tooltip-bg);
+  --color-tooltip-text: var(--tooltip-text);
+  --color-tooltip-border: var(--tooltip-border);
+
+  /* Special */
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-neutral: var(--neutral);
+  --color-highlight: var(--highlight);
+  --color-highlight-soft: var(--highlight-soft);
+}
+
+/*
+ * Shadows are NOT re-declared in @theme to avoid colliding with Tailwind v4's
+ * `--shadow-*` namespace. They live in `:root` / `[data-theme="dark"]` above
+ * and are consumed via `var(--shadow-md)` (or `shadow-[var(--shadow-md)]`).
+ */
+
+/* =============================================================================
+   Base styles
+   ========================================================================== */
+
+html {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg-primary);
+  background-image: var(--gradient-app-bg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
+@layer utilities {
+  .bg-app-gradient {
+    background-color: var(--bg-primary);
+    background-image: var(--gradient-app-bg);
+  }
+
+  .bg-surface-gradient {
+    background-color: var(--bg-secondary);
+    background-image: var(--gradient-surface);
+  }
+
+  .bg-card-gradient {
+    background-color: var(--bg-card);
+    background-image: var(--gradient-card);
+  }
+
+  .rounded-token-md {
+    border-radius: var(--radius-md);
+  }
+
+  .rounded-token-lg {
+    border-radius: var(--radius-lg);
+  }
+
+  .rounded-token-xl {
+    border-radius: var(--radius-xl);
+  }
+
+  .rounded-token-2xl {
+    border-radius: var(--radius-2xl);
+  }
+
+  .rounded-token-3xl {
+    border-radius: var(--radius-3xl);
+  }
+
+  .shadow-soft-sm {
+    box-shadow: var(--shadow-soft-sm);
+  }
+
+  .shadow-soft-md {
+    box-shadow: var(--shadow-soft-md);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: var(--shadow-soft-lg);
+  }
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-text);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   Scrollbar styles — WebKit + Firefox
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-corner);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
