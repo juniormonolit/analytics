@@ -5,6 +5,7 @@ import {
   getStubAuthUserKey,
   getStubAuthUsername,
 } from "./stubAuth";
+import { isSessionCookieValue } from "./sessionCookie";
 
 export type SessionUser = {
   userKey: string;
@@ -14,7 +15,7 @@ export type SessionUser = {
 export async function getSessionUser(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
   const value = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (value !== getStubAuthUserKey()) return null;
+  if (!isSessionCookieValue(value)) return null;
   return {
     userKey: getStubAuthUserKey(),
     username: getStubAuthUsername(),

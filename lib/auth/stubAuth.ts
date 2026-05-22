@@ -42,6 +42,7 @@ export function isValidStubCredentials(
   password: string,
 ): boolean {
   return (
-    username === getStubAuthUsername() && password === getStubAuthPassword()
+    username.trim() === getStubAuthUsername() &&
+    password === getStubAuthPassword()
   );
 }

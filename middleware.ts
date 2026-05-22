@@ -1,11 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { applySessionCookie } from "@/lib/auth/sessionCookie";
+import { applySessionCookie, isSessionCookieValue } from "@/lib/auth/sessionCookie";
 import {
   isValidStubCredentials,
   parseBasicAuthHeader,
   SESSION_COOKIE_NAME,
-  getStubAuthUserKey,
 } from "@/lib/auth/stubAuth";
 
 const PUBLIC_PATHS = new Set(["/login", "/api/auth/login"]);
@@ -15,7 +14,9 @@ function isPublicPath(pathname: string): boolean {
 }
 
 function hasValidSession(request: NextRequest): boolean {
-  return request.cookies.get(SESSION_COOKIE_NAME)?.value === getStubAuthUserKey();
+  return isSessionCookieValue(
+    request.cookies.get(SESSION_COOKIE_NAME)?.value,
+  );
 }
 
 function wantsJsonResponse(request: NextRequest): boolean {

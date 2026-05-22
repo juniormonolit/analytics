@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   const { username, password } = parsed.data;
-  if (!isValidStubCredentials(username, password)) {
+  if (!isValidStubCredentials(username.trim(), password)) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
 

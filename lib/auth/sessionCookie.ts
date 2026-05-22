@@ -1,15 +1,13 @@
 import type { NextResponse } from "next/server";
 
-import { SESSION_COOKIE_NAME, getStubAuthUserKey } from "./stubAuth";
+import { SESSION_COOKIE_NAME } from "./stubAuth";
+
+/** Fixed marker — middleware must not depend on runtime env (Edge inlines env at build). */
+export const SESSION_COOKIE_VALUE = "1";
 
 export function sessionCookieOptions() {
-  const secureFromEnv = process.env.STUB_AUTH_SECURE_COOKIE;
-  const secure =
-    secureFromEnv === "true"
-      ? true
-      : secureFromEnv === "false"
-        ? false
-        : process.env.NODE_ENV === "production";
+  // Secure cookies are opt-in: many prod deployments run over plain HTTP behind VPN/IP.
+  const secure = process.env.STUB_AUTH_SECURE_COOKIE === "true";
 
   return {
     httpOnly: true,
@@ -23,7 +21,7 @@ export function sessionCookieOptions() {
 export function applySessionCookie(response: NextResponse): NextResponse {
   response.cookies.set(
     SESSION_COOKIE_NAME,
-    getStubAuthUserKey(),
+    SESSION_COOKIE_VALUE,
     sessionCookieOptions(),
   );
   return response;
@@ -35,4 +33,8 @@ export function clearSessionCookie(response: NextResponse): NextResponse {
     maxAge: 0,
   });
   return response;
+}
+
+export function isSessionCookieValue(value: string | undefined): boolean {
+  return value === SESSION_COOKIE_VALUE;
 }
