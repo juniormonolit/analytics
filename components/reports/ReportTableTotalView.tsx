@@ -30,7 +30,7 @@ import { formatTeamScopeLabel } from "./teamScopeLabel";
 type ReportTableTotalViewProps = {
   row: ReportRow;
   metricColumns: MetricColumn[];
-  teamIds: readonly number[];
+  teamIds: readonly string[];
   showComparison: boolean;
 };
 

@@ -87,11 +87,13 @@ export function isRepeatFunnel(
   return repeatFunnelIds.has(funnelId);
 }
 
-export function filterDealsByFunnelKind(
-  deals: ReadonlyArray<DealFunnelProjection>,
+export function filterDealsByFunnelKind<
+  T extends Pick<DealFunnelProjection, "deal_id" | "funnel_id">,
+>(
+  deals: ReadonlyArray<T>,
   repeatFunnelIds: ReadonlySet<number>,
   kind: FunnelKind,
-): DealFunnelProjection[] {
+): T[] {
   return deals.filter((deal) =>
     kind === "primary"
       ? isPrimaryFunnel(deal.funnel_id, repeatFunnelIds)
@@ -99,11 +101,13 @@ export function filterDealsByFunnelKind(
   );
 }
 
-export function filterDealsByDealScope(
-  deals: ReadonlyArray<DealFunnelProjection>,
+export function filterDealsByDealScope<
+  T extends Pick<DealFunnelProjection, "deal_id" | "funnel_id">,
+>(
+  deals: ReadonlyArray<T>,
   repeatFunnelIds: ReadonlySet<number>,
   dealScope: DealScope,
-): DealFunnelProjection[] {
+): T[] {
   if (dealScope === "all") return [...deals];
   return filterDealsByFunnelKind(deals, repeatFunnelIds, dealScope);
 }

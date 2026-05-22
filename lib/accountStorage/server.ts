@@ -1,14 +1,9 @@
 import "server-only";
 
 import { createOrgServerClient } from "@/lib/org/client";
+import type { OrgJson } from "@/lib/org/database.types";
 
-type JsonPayload =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: JsonPayload | undefined }
-  | JsonPayload[];
+type JsonPayload = OrgJson;
 
 export async function readAccountPayload<T>(
   userKey: string,

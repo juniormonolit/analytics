@@ -23,7 +23,9 @@ import "server-only";
  */
 import type { DepartmentId } from "@/lib/org/departmentId";
 import { resolveBitrixDepartmentIds } from "@/lib/org/repository";
+import type { Period } from "@/lib/period/types";
 import type { Database } from "@/lib/supabase/types.generated";
+import type { ServerSupabaseClient } from "@/lib/supabase/server";
 
 import { resolveManagerIdAliases } from "@/features/reports/engine/dimensions/primaryRepeatDeals";
 

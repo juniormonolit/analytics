@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import type { MetricDataType } from "@/features/reports/engine/types";
 import type { MetricCatalogRow } from "@/features/reports/useMetricsCatalog";
 import { formatCellValue } from "@/lib/format/cell";
 
@@ -40,7 +41,7 @@ export function MetricColorSettingsPanel({
 
   const metricId = metric.id;
   const metricLabel = metric.name_ru;
-  const dataType = metric.data_type;
+  const dataType = metric.data_type as MetricDataType;
   const decimalPlaces = metric.decimal_places ?? 0;
 
   const saved = getSettingsForMetric(metricId);

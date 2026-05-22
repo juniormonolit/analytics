@@ -218,9 +218,10 @@ export async function runManagersLevel(
       const sourceTeamId = row.dimension.team_id;
       const resolvedTeamId =
         typeof managerId === "number"
-          ? resolveTeamIdForManager(
+          ? labels.managerTeamId.get(managerId) ??
+            resolveTeamIdForManager(
               typeof sourceTeamId === "number" ? sourceTeamId : 0,
-              labels.managerTeamId.get(managerId),
+              null,
             )
           : 0;
 

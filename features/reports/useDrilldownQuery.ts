@@ -60,7 +60,7 @@ export function drilldownQueryKey(input: DrilldownRequest): readonly unknown[] {
     input.period.to,
     input.comparisonPeriod.from,
     input.comparisonPeriod.to,
-    (input.filters.teamIds ?? []).slice().sort((a, b) => a - b).join(","),
+    (input.filters.teamIds ?? []).slice().sort((a, b) => a.localeCompare(b)).join(","),
     input.limit ?? null,
     input.offset ?? null,
   ] as const;

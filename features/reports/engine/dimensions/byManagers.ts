@@ -13,6 +13,12 @@ import type { Period } from "@/lib/period/types";
 import type { ServerSupabaseClient } from "@/lib/supabase/server";
 
 import type { MetricRow } from "../metricsCatalog";
+import type {
+  DimensionColumn,
+  IntermediateRow,
+  MetricColumn,
+  RawAggregates,
+} from "../types";
 import { DEFAULT_DEAL_SCOPE, stripDealScopeSuffix, type DealScope } from "../dealScope";
 import {
   CALLED_DEALS_METRIC_ID,

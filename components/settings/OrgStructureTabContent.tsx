@@ -4,9 +4,11 @@ import { useMemo, useState } from "react";
 
 import { ErrorState } from "@/components/reports/states/ErrorState";
 import { TableSkeleton } from "@/components/reports/states/TableSkeleton";
-import { useOrgStructure } from "@/features/settings/hooks/useOrgStructure";
+import { useOrgStructure, type OrgStructureData } from "@/features/settings/hooks/useOrgStructure";
 
 import { OrgStructureTreeNode } from "./OrgStructureTreeNode";
+
+type OrgDepartmentNode = OrgStructureData["departments"][number];
 
 export function OrgStructureTabContent() {
   const { data, isLoading, error, refetch } = useOrgStructure();
@@ -18,8 +20,8 @@ export function OrgStructureTabContent() {
     if (!q) return data;
 
     function filterDepartment(
-      node: (typeof data.departments)[number],
-    ): (typeof data.departments)[number] | null {
+      node: OrgDepartmentNode,
+    ): OrgDepartmentNode | null {
       const employees = node.employees.filter(
         (e) =>
           e.name.toLowerCase().includes(q) ||

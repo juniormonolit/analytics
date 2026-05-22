@@ -1,11 +1,11 @@
 import type { TeamsCatalog } from "@/features/sales/hooks/useTeamsTree";
 
-function collectAllTeams(catalog: TeamsCatalog): Array<{ id: number; name: string }> {
+function collectAllTeams(catalog: TeamsCatalog): Array<{ id: string; name: string }> {
   if (catalog.kind === "flat") {
     return catalog.teams.map((team) => ({ id: team.id, name: team.name }));
   }
 
-  const out: Array<{ id: number; name: string }> = [];
+  const out: Array<{ id: string; name: string }> = [];
   const walk = (nodes: typeof catalog.nodes) => {
     for (const node of nodes) {
       out.push({ id: node.id, name: node.name });

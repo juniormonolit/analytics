@@ -37,6 +37,7 @@ export type RunReportRequest = {
   metricIds: MetricInputId[];
   grouping: Grouping;
   /** Primary / repeat / all funnel filter. Default: `"primary"`. */
+  dealScope?: DealScope;
   /** Metric ids hidden from report UI via Settings (client-local). */
   uiHiddenMetricIds?: string[];
 };
