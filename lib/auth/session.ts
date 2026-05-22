@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 
 import {
   SESSION_COOKIE_NAME,
-  STUB_AUTH_USER_KEY,
-  STUB_AUTH_USERNAME,
+  getStubAuthUserKey,
+  getStubAuthUsername,
 } from "./stubAuth";
 
 export type SessionUser = {
@@ -14,6 +14,9 @@ export type SessionUser = {
 export async function getSessionUser(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
   const value = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (value !== STUB_AUTH_USER_KEY) return null;
-  return { userKey: STUB_AUTH_USER_KEY, username: STUB_AUTH_USERNAME };
+  if (value !== getStubAuthUserKey()) return null;
+  return {
+    userKey: getStubAuthUserKey(),
+    username: getStubAuthUsername(),
+  };
 }

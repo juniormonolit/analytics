@@ -1,11 +1,23 @@
 /** Stub auth credentials until real Supabase Auth is wired. */
-export const STUB_AUTH_USERNAME = "admin";
-export const STUB_AUTH_PASSWORD = "pizda1488";
+export const SESSION_COOKIE_NAME = "bi_session";
+
+export function getStubAuthUsername(): string {
+  return process.env.STUB_AUTH_USERNAME?.trim() || "admin";
+}
+
+export function getStubAuthPassword(): string {
+  return process.env.STUB_AUTH_PASSWORD?.trim() || "pizda1488";
+}
 
 /** Stable user key persisted in account storage rows. */
+export function getStubAuthUserKey(): string {
+  return process.env.STUB_AUTH_USER_KEY?.trim() || getStubAuthUsername();
+}
+
+/** Default user key for client stores before session bootstrap. */
 export const STUB_AUTH_USER_KEY = "admin";
 
-export const SESSION_COOKIE_NAME = "bi_session";
+export const STUB_AUTH_USERNAME = "admin";
 
 export function parseBasicAuthHeader(
   header: string | null,
@@ -30,6 +42,6 @@ export function isValidStubCredentials(
   password: string,
 ): boolean {
   return (
-    username === STUB_AUTH_USERNAME && password === STUB_AUTH_PASSWORD
+    username === getStubAuthUsername() && password === getStubAuthPassword()
   );
 }

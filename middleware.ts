@@ -1,15 +1,39 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { applySessionCookie } from "@/lib/auth/sessionCookie";
 import {
   isValidStubCredentials,
   parseBasicAuthHeader,
   SESSION_COOKIE_NAME,
-  STUB_AUTH_USER_KEY,
+  getStubAuthUserKey,
 } from "@/lib/auth/stubAuth";
 
+const PUBLIC_PATHS = new Set(["/login", "/api/auth/login"]);
+
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.has(pathname);
+}
+
+function hasValidSession(request: NextRequest): boolean {
+  return request.cookies.get(SESSION_COOKIE_NAME)?.value === getStubAuthUserKey();
+}
+
+function wantsJsonResponse(request: NextRequest): boolean {
+  const accept = request.headers.get("accept") ?? "";
+  return (
+    request.nextUrl.pathname.startsWith("/api/") ||
+    accept.includes("application/json")
+  );
+}
+
 export function middleware(request: NextRequest) {
-  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  if (sessionCookie === STUB_AUTH_USER_KEY) {
+  const { pathname } = request.nextUrl;
+
+  if (isPublicPath(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (hasValidSession(request)) {
     return NextResponse.next();
   }
 
@@ -20,22 +44,17 @@ export function middleware(request: NextRequest) {
     credentials &&
     isValidStubCredentials(credentials.username, credentials.password)
   ) {
-    const response = NextResponse.next();
-    response.cookies.set(SESSION_COOKIE_NAME, STUB_AUTH_USER_KEY, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30,
-    });
-    return response;
+    return applySessionCookie(NextResponse.next());
   }
 
-  return new NextResponse("Authentication required", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Smekalochka"',
-    },
-  });
+  if (wantsJsonResponse(request)) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
+  const loginUrl = request.nextUrl.clone();
+  loginUrl.pathname = "/login";
+  loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {

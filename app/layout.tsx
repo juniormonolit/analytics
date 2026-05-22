@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { AppShell } from "@/components/shell/AppShell";
+import { AppShellGate } from "@/components/shell/AppShellGate";
 import { QueryProvider } from "@/lib/query/QueryProvider";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 import { inlineThemeScript } from "@/lib/theme/inlineThemeScript";
@@ -28,7 +28,7 @@ export default function RootLayout({
       <body className="h-screen overflow-hidden bg-bg-primary text-text-primary antialiased">
         <ThemeProvider>
           <QueryProvider>
-            <AppShell>{children}</AppShell>
+            <AppShellGate>{children}</AppShellGate>
           </QueryProvider>
         </ThemeProvider>
       </body>
